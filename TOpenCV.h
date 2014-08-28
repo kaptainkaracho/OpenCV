@@ -1,8 +1,9 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include <opencv2/objdetect/objdetect.hpp>
-#include <opencv\cv.h>
 #include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
 
 
 using namespace cv;
@@ -14,13 +15,15 @@ private:
 	string projectFolder;
 	Mat imgMatrix;
 	Mat contoursMat;
+	int thresh;
+	int max_thresh;
+	RNG rng;
+	Mat src_gray;
 public:
 	OpenCVObj();
 	string getProjectFolder();
 	int loadImageJPG(string img);
-	Mat detectContours(); 
-	void extractContours();
-	void test(Mat contours);
-	void showImg(Mat matrix, string title);
-	void saveImg(Mat matrix, string name);
+	void showImg(string title, Mat src);
+	void trackContours(Mat src);
+	Mat getImgMat();
 };
