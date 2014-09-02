@@ -1,34 +1,44 @@
-#include "TOpenCV.h"
+//#include "TOpenCV.h"
+#include <opencv\cv.h>
+#include <opencv\highgui.h>
 
-int main( int argc, char** argv )
-{
-	OpenCVObj objcv;
-	objcv.loadImageJPG("D:\\Objekterkennung\\test2.tiff");
-	Mat src = objcv.getImgMat();
-	objcv.trackContours(src);
-}
+using namespace cv;
 
-///** @function thresh_callback */
-//void thresh_callback(int, void* )
+
+//int main( int argc, char** argv )
 //{
-//  Mat canny_output;
-//  vector<vector<Point> > contours;
-//  vector<Vec4i> hierarchy;
-//
-//  /// Detect edges using canny
-//  Canny( src_gray, canny_output, thresh, thresh*2, 3 );
-//  /// Find contours
-//  findContours( canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
-//
-//  /// Draw contours
-//  Mat drawing = Mat::zeros( canny_output.size(), CV_8UC3 );
-//  for( int i = 0; i< contours.size(); i++ )
-//     {
-//       Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
-//       drawContours( drawing, contours, i, color, 2, 8, hierarchy, 0, Point() );
-//     }
-//
-//  /// Show in a window
-//  namedWindow( "Contours", CV_WINDOW_AUTOSIZE );
-//  imshow( "Contours", drawing );
+//	// OpenCV Objekt
+//	OpenCVObj objcv;
+//	// Grafik laden
+//	objcv.loadImageJPG("D:\\Objekterkennung\\test2.tiff");
+//	// Konturen erkennen
+//	Mat src = objcv.getImgMat();
+//	objcv.trackContours(src);
 //}
+
+
+int main(int argc, char** agrv){
+	
+	IplImage* img;
+	img = cvLoadImage("D:\\Objekterkennung\\test2.tiff");
+	IplImage* binaryImage = cvCreateImage(cvGetSize(img), IPL_DEPTH_8U, 1);
+
+	cvSplit(img, binaryImage, NULL, NULL, NULL);
+
+	IplImage* normalized = cvCreateImage(cvGetSize(img), img-> depth, 1);
+	cvEqualizeHist(binaryImage, normalized);
+
+	IplImage* gauss = cvCreateImage(cvGetSize(img), img -> depth, 1);
+	cvSmooth(normalized, gauss, CV_GAUSSIAN, 13, 13);
+
+	IplImage* cannyimg = cvCreateImage ( cvGetSize (img), img ->depth , 1);
+	cvCanny(gauss, cannyimg, 40, 130);
+
+	Mat matrix(cannyimg);
+	namedWindow("Konturen mit Canny", CV_WINDOW_AUTOSIZE);
+	imshow("Konturen mit Canny", matrix);
+
+	cvWaitKey();
+
+	return 0;
+}

@@ -150,9 +150,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="TObjekterkennung.cpp" />
     <ClCompile Include="TOpenCV.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="TObjekterkennung.h" />
     <ClInclude Include="TOpenCV.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

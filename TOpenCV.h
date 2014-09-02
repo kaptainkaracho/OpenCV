@@ -19,6 +19,7 @@ private:
 	int max_thresh;
 	RNG rng;
 	Mat src_gray;
+	double deviation; 
 public:
 	OpenCVObj();
 	string getProjectFolder();
@@ -26,4 +27,5 @@ public:
 	void showImg(string title, Mat src);
 	void trackContours(Mat src);
 	Mat getImgMat();
+	double calcSurfArea(vector<Point> contour);
 };
