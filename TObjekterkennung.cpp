@@ -32,9 +32,24 @@ IplImage* ObjDetection::analyseRealPicture(char* file){
 	CvMemStorage* canny_storage = cvCreateMemStorage(0); 
 	CvSeq* contoursOriginalPicture = 0;
 
+	// Konturen finden mittels cvFindContours 
+    int conts = cvFindContours(cannyimg, canny_storage, 
+		&contoursOriginalPicture, sizeof(CvContour), 
+		CV_RETR_LIST, // erkennt über diesen Modus auch innere Kanten
+		CV_CHAIN_APPROX_NONE);
+    // Konturen in ein neues Bild übertragen
+    cvDrawContours( newimg, contoursOriginalPicture, 
+		cvScalar(255,255,255), cvScalarAll(255), 100);
+
+	// Speicher wieder freigeben
+	cvReleaseMemStorage( &canny_storage); 
+    cvReleaseImage(&img); 
+    cvReleaseImage(&binaryImage); 
+    cvReleaseImage(&normalized); 
+    cvReleaseImage(&gauss); 
+    cvReleaseImage(&cannyimg);
+	// Rückgabe = Grafik mit Konturen
+    return newimg;
 }
 
-IplImage* ObjDetection::analyseAbstractPicture(char* file){
-
-}
 

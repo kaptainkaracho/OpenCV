@@ -28,4 +28,5 @@ public:
 	void trackContours(Mat src);
 	Mat getImgMat();
 	double calcSurfArea(vector<Point> contour);
+	void findObject();
 };

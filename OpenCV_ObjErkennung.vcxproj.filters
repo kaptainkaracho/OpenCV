@@ -24,12 +24,18 @@
     <ClCompile Include="TObjekterkennung.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="Tutorial.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TOpenCV.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="TObjekterkennung.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Tutorial.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

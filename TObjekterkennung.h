@@ -13,12 +13,13 @@ using namespace cv;
 using namespace std;
 
 // DEFINITIONEN
-#define PROJECTFOLDER "D:\\Objekterkennung"
+#define SOURCEFILE "D:\\Objekterkennung\\test2.tiff"
+#define TEMPLATE_DICE1 "D:\\Objekterkennung\\dice_template.png"
 
 class ObjDetection{
 private:
 
 public:
-	IplImage* analyseAbstractPicture(char* file);
 	IplImage* analyseRealPicture(char* file);
+	void findDice();
 };
