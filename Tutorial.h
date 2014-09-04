@@ -3,18 +3,6 @@
 
 using namespace cv;
 
-
-class ContentFinder{
-private:
-	float hranges[2];
-	const float* ranges[3];
-	int channels[3];
-	float threshold;
-	
-public:
-
-};
-
 class Histogram1D{
 private:
 	int histSize[1]; // Anzahl von Kästen
@@ -148,5 +136,125 @@ public:
 		Mat result;
 		equalizeHist(image, result);
 		return result;
+	}
+	MatND getHueHistogram(const Mat &image, int minSaturation = 0){
+		MatND hist;
+
+		// Konvertierung zu HSV Farbbereich
+		Mat hsv;
+		cvtColor(image, hsv, CV_BGR2HSV);
+		// benutzte Maske (oder auch nicht)
+		Mat mask;
+
+		if (minSaturation> 0){
+			// Spalten der drei Kanäle in drei Bilder
+			vector<Mat> v;
+			split(hsv,v);
+			cv::threshold(v[1],mask,minSaturation,255, THRESH_BINARY);
+		}
+
+		// Vorbereitung auf ein 1D Hue Histogram
+		hranges[0] = 0.0;
+		hranges[1] = 180.0;
+		channels[0] = 0; // der Hue Kanal
+
+		// Berechne Histogram
+		calcHist(&hsv, 1,
+			channels,
+			mask,
+			hist,
+			1,
+			histSize,
+			ranges);
+		return hist;
+	}
+	Mat colorReduce(const Mat& image, int div = 64){
+		Mat result = image;
+		
+		int nl = image.row;
+		int nc = image.cols * image.channels();
+
+		for (int j = 0; j < nl; j++){
+
+			uchar* data = image.ptr<uchar>(j);
+			for (int i = 0; i < nc; i++){
+				data[i] = data[i]/div*div + div/2;
+			}
+		}
+		return result;
+	}
+};
+
+class ContentFinder{
+private:
+	float hranges[2];
+	const float* ranges[3];
+	int channels[3];
+	float threshold;
+	MatND histogram;
+public:
+	ContentFinder() : threshold(-1.0f){
+		ranges[0] = hranges;
+		ranges[1] = hranges;
+		ranges[2] = hranges;
+	}
+	void setThreshold(float t){
+		threshold = t;
+	}
+	float getThreshold(){
+		return threshold;
+	}
+	void setHistogram(const MatND& h){
+		histogram = h;
+		normalize(histogram, histogram, 1.0);
+	}
+	Mat find(const Mat& image, float minValue, float maxValue, int *channels, int dim){
+		Mat result;
+
+		hranges[0] = minValue;
+		hranges[1] = maxValue;
+
+		for (int i = 0; i < dim; i++){
+			this->channels[i] = channels[i];
+		}
+
+		calcBackProject(&image, 1,
+			channels,
+			histogram,
+			result,
+			ranges,
+			255.0);
+		
+		if (threshold>0.0)
+			cv::threshold(result, result, 255*threshold, 255, THRESH_BINARY);
+		return result;
+	}
+};
+
+class ImageComparator{
+private:
+	Mat reference;
+	Mat input;
+	MatND refH;
+	MatND inputH;
+	ColorHistogram hist;
+	int div;
+public:
+	ImageComparator() : div(32){
+	}
+	void setColorReduction(int factor){
+		div = factor;
+	}
+	int getColorReduction(){
+		return div;
+	}
+	void setReferenceImage(const Mat& image){
+		reference = hist.colorReduce(image, div);
+		refH = hist.getHistogram(image);
+	}
+	double compare (const Mat& image){
+		input = hist.colorReduce(image, div);
+		inputH = hist.getHistogram(input);
+		return compareHist(refH, inputH, CV_COMP_INTERSECT);
 	}
 };
