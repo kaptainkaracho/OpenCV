@@ -1,32 +1,19 @@
-#include "TOpenCV.h"
-//#include "TObjekterkennung.h"
+#include "TEckenerkennung.h"
 
 
+int main (int argc, char** argv){
+	/*HarrisCorner hc;
 
+	Mat corner = hc.getHarrisCorner();
+	Mat corner_scaled = hc.getScaledMatrix(corner);
 
-int main( int argc, char** argv )
-{
-	// OpenCV Objekt
-	OpenCVObj objcv;
-	// Grafik laden
-	objcv.loadImageJPG("D:\\Objekterkennung\\test2.tiff");
-	// Konturen erkennen
-	Mat src = objcv.getImgMat();
-	objcv.trackContours(src);
+	hc.showImgCircle(corner, corner_scaled);
+	waitKey();*/
+
+	ShiTomasi st;
+	vector<Point2f> corners = st.getCorners();
+	st.displayDice3(corners);
+	//st.showImgCircles(corners);
+
+	waitKey();
 }
-
-
-//int main(int argc, char** agrv){
-//	
-//	ObjDetection obj;
-//	IplImage* test;
-//	test = obj.analyseRealPicture("D:\\Objekterkennung\\test2.tiff");
-//	Mat matrix(test);
-//
-//	namedWindow("Test");
-//	imshow("Test", matrix);
-//
-//	cvWaitKey();
-//	
-//	return 0;
-//}

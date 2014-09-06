@@ -171,16 +171,16 @@ public:
 	Mat colorReduce(const Mat& image, int div = 64){
 		Mat result = image;
 		
-		int nl = image.row;
-		int nc = image.cols * image.channels();
+		//int nl = image.row;
+		//int nc = image.cols * image.channels();
 
-		for (int j = 0; j < nl; j++){
+		//for (int j = 0; j < nl; j++){
 
-			uchar* data = image.ptr<uchar>(j);
-			for (int i = 0; i < nc; i++){
+			//uchar* data = image.ptr<uchar>(j);
+			/*for (int i = 0; i < nc; i++){
 				data[i] = data[i]/div*div + div/2;
-			}
-		}
+			}*/
+		//}
 		return result;
 	}
 };
