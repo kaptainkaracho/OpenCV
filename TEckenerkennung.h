@@ -23,7 +23,7 @@ private:
 
 public:
 	HarrisCorner(){
-		src = imread("D:\\Objekterkennung\\test2.tiff", CV_LOAD_IMAGE_GRAYSCALE);
+		src = imread("D:\\Objekterkennung\\Base6.png", CV_LOAD_IMAGE_GRAYSCALE);
 		thresh = 150;
 		max_thresh = 255;
 		source_window = "Source image";
@@ -87,7 +87,7 @@ private:
 
 public:
 	ShiTomasi(){
-		filename = "D:\\Objekterkennung\\test2.tiff";
+		filename = "D:\\Objekterkennung\\Base.png";
 		src = imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
 
 		// Detector Parameter
@@ -123,7 +123,7 @@ public:
 		imwrite("D:\\Objekterkennung\\ShiTomasi.png", copy);
 	}
 	void displayDice3(vector<Point2f> corners){
-		vector<Point2f> points = sortPointsDice3(corners);
+		vector<Point2f> points = sortVectorPoints(corners);
 
 		// Diagonalen berechnen
 		Point2f d1;
@@ -184,7 +184,7 @@ public:
 		imshow("Schnittpunkt", copy);
 	}
 	// sortiert die Würfeldaten nach einer Drei
-	vector<Point2f> sortPointsDice3(vector<Point2f> vec){
+	vector<Point2f> sortVectorPoints(vector<Point2f> vec){
 		std::sort(vec.begin(), vec.end(), [](const cv::Point2f &a, const cv::Point2f &b) {
 		return a.x*a.x + a.y*a.y < b.x*b.x + b.y*b.y;});
 		return vec;
