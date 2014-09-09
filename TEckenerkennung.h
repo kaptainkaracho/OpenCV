@@ -77,19 +77,21 @@ public:
 class ShiTomasi{
 private:
 	Mat src;
+	// Dector Parameter (Eckenerkennung)
 	int maxCorners;
-	char* filename;
 	double qualityLevel;
 	double minDistance;
 	int blockSize;
 	bool useHarrisDetector;
 	double k;
+	
 
+	// private Constructor
+	//ShiTomasi() {};
 public:
-	ShiTomasi(){
-		filename = "D:\\Objekterkennung\\Base.png";
-		src = imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
-
+	ShiTomasi() {
+		//src = imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
+		src = imread("D:\\Objekterkennung\\test2.tiff", CV_LOAD_IMAGE_GRAYSCALE);
 		// Detector Parameter
 		maxCorners = 30;
 		qualityLevel = 0.01;
@@ -97,6 +99,9 @@ public:
 		blockSize = 3;
 		useHarrisDetector = false;
 		k = 0.04;
+
+		
+
 	}
 	void loadImage(char* file){
 		src = imread(file, CV_LOAD_IMAGE_GRAYSCALE);
@@ -188,26 +193,5 @@ public:
 		std::sort(vec.begin(), vec.end(), [](const cv::Point2f &a, const cv::Point2f &b) {
 		return a.x*a.x + a.y*a.y < b.x*b.x + b.y*b.y;});
 		return vec;
-	}
-	double* calcLine(Point2f p1, Point2f p2){
-		double result[2];
-		double m = 0.0;
-		double b = 0.0;
-
-		if ((p1.y == p2.y) ||(p1.x == p2.x)){
-			m = 0.0;
-		} else {
-			m = (p1.y - p2.y) / (p1.x - p2.x);
-		}
-		b = p1.y - p1.x * m;
-
-		result[0] = m;
-		result[1] = b;
-		return result;
-	}
-	Point2f calcIntersection(vector<double> line1, vector<double> line2){
-		Point2f result;
-
-		return result;
 	}
 };
