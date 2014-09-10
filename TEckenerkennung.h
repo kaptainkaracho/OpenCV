@@ -85,7 +85,6 @@ private:
 	bool useHarrisDetector;
 	double k;
 	
-
 	// private Constructor
 	//ShiTomasi() {};
 public:
@@ -99,9 +98,6 @@ public:
 		blockSize = 3;
 		useHarrisDetector = false;
 		k = 0.04;
-
-		
-
 	}
 	void loadImage(char* file){
 		src = imread(file, CV_LOAD_IMAGE_GRAYSCALE);
@@ -127,16 +123,14 @@ public:
 		imshow("Ecken", copy);
 		imwrite("D:\\Objekterkennung\\ShiTomasi.png", copy);
 	}
-	void displayDice3(vector<Point2f> corners){
-		vector<Point2f> points = sortVectorPoints(corners);
-
+	Point2f centerDice(vector<Point2f> corners){
 		// Diagonalen berechnen
 		Point2f d1;
-		d1.x= points[0].x - points[3].x;
-		d1.y= points[0].y - points[3].y;
+		d1.x= corners[0].x - corners[3].x;
+		d1.y= corners[0].y - corners[3].y;
 		Point2f d2;
-		d2.x = points[1].x - points[2].x;
-		d2.y = points[1].y - points[2].y;
+		d2.x = corners[1].x - corners[2].x;
+		d2.y = corners[1].y - corners[2].y;
 
 		// euklidische Länge der Diagonalen
 		double d1l = sqrt(pow(d1.x,2) + pow(d1.y,2));
@@ -148,12 +142,12 @@ public:
 		// Gerade 1
 		double m = 0.0;
 		double b = 0.0;
-		if ((points[0].y == points[3].y) ||(points[0].x == points[3].x)){
+		if ((corners[0].y == corners[3].y) ||(corners[0].x == corners[3].x)){
 			m = 0.0;
 		} else {
-			m = (points[0].y - points[3].y) / (points[0].x - points[3].x);
+			m = (corners[0].y - corners[3].y) / (corners[0].x - corners[3].x);
 		}
-		b = points[0].y - points[0].x * m;
+		b = corners[0].y - corners[0].x * m;
 
 		double line1[2];
 		line1[0] = m;
@@ -161,12 +155,12 @@ public:
 		// Gerade 2
 		m = 0.0;
 		b = 0.0;
-		if ((points[1].y == points[2].y) ||(points[1].x == points[2].x)){
+		if ((corners[1].y == corners[2].y) ||(corners[1].x == corners[2].x)){
 			m = 0.0;
 		} else {
-			m = (points[1].y - points[2].y) / (points[1].x - points[2].x);
+			m = (corners[1].y - corners[2].y) / (corners[1].x - corners[2].x);
 		}
-		b = points[1].y - points[1].x * m;
+		b = corners[1].y - corners[1].x * m;
 
 		double line2[2];
 		line2[0] = m;
@@ -181,17 +175,32 @@ public:
 		intersection.x = x;
 		intersection.y = y;
 
-		Mat copy;
-		copy = src.clone();
-		int r = 4;
-		circle( copy, intersection, r, Scalar(0), 2, 8, 0 ); 
-		namedWindow("Schnittpunkt", CV_WINDOW_AUTOSIZE);
-		imshow("Schnittpunkt", copy);
+		return intersection;
+	}
+	// berechnet die Fläche von vier Punkten (Robus)
+	double calcArea(vector<Point2f> points){
+		// Diagonalen berechnen
+		Point2f d1;
+		d1.x= points[0].x - points[3].x;
+		d1.y= points[0].y - points[3].y;
+		Point2f d2;
+		d2.x = points[1].x - points[2].x;
+		d2.y = points[1].y - points[2].y;
+
+		// euklidische Länge der Diagonalen
+		double d1l = sqrt(pow(d1.x,2) + pow(d1.y,2));
+		double d2l = sqrt(pow(d2.x,2) + pow(d2.y,2));
+
+		// Flächeninhalt 
+		return 0.5 * d1l * d2l;
 	}
 	// sortiert die Würfeldaten nach einer Drei
 	vector<Point2f> sortVectorPoints(vector<Point2f> vec){
 		std::sort(vec.begin(), vec.end(), [](const cv::Point2f &a, const cv::Point2f &b) {
 		return a.x*a.x + a.y*a.y < b.x*b.x + b.y*b.y;});
 		return vec;
+	}
+	Mat getSourceMatrix(){
+		return src;
 	}
 };
