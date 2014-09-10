@@ -1,9 +1,11 @@
 #include "opencv2\highgui\highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include <iostream>
+#include <fstream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include "Shlwapi.h"
 
 using namespace cv;
 using namespace std;
@@ -178,7 +180,9 @@ public:
 		return intersection;
 	}
 	// berechnet die Fläche von vier Punkten (Robus)
-	double calcArea(vector<Point2f> points){
+	double calcArea(vector<Point2f> corners){
+		vector<Point2f> points;
+		points = sortVectorPoints(corners);
 		// Diagonalen berechnen
 		Point2f d1;
 		d1.x= points[0].x - points[3].x;
@@ -202,5 +206,16 @@ public:
 	}
 	Mat getSourceMatrix(){
 		return src;
+	}
+	// schreibt die Ecken in eine CSV
+	void exportCorners(char* filename, vector<Point2f> corners){
+		ofstream exportfile(filename, ios::trunc);
+		if (exportfile.is_open()){
+			for (int i = 0; i < corners.size(); i++){
+				string line = to_string(corners[i].x) + ";" + to_string(corners[i].y);
+				exportfile << line << endl;
+			}
+			exportfile.close();
+		}
 	}
 };

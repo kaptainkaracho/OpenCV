@@ -151,7 +151,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="TObjekterkennung.cpp" />
     <ClCompile Include="TOpenCV.cpp" />
     <ClCompile Include="Tutorial.cpp" />
   </ItemGroup>

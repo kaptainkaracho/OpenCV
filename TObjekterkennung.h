@@ -13,76 +13,77 @@ private:
 	vector<Point2f> corners;
 
 	// Gruppierungsparameter
-	double f1;
+	/*double f1;
 	double f2;
 	double dist1;
-	double dist2;
+	double dist2;*/
+	double area_min;
+	double area_max;
 public:
 	ObjDetection(char* filename){
 		// Gruppierungsparameter
-		// distance
-		dist1 = 12.0;
-		dist2 = 26.0;
-		// deviation
-		f1 = 0.91;
-		f2 = 0.96;
+		//// distance
+		//dist1 = 12.0;
+		//dist2 = 26.0;
+		//// deviation
+		//f1 = 0.91;
+		//f2 = 0.96;
+		// Fläche eines Würfels
+		area_min = 100;
+		area_max = 180;
 
 		ShiTomasi st;
 		cornerDetector = st;
 		// erfasse Ecken 
-		corners = cornerDetector.getCorners();
+		vector<Point2f> tmpCorners;
+		tmpCorners = cornerDetector.getCorners();
 		// sortierte Punkte 
-		corners = cornerDetector.sortVectorPoints(corners);
-		// gruppieren der Punkte
-		groupCorners(corners);
+		corners = cornerDetector.sortVectorPoints(tmpCorners);
+		// exportiere Ecken in eine CSV
+		cornerDetector.exportCorners("D:\\Objekterkennung\\corners.csv", corners);
 	}
-	void groupCorners(vector<Point2f> points){
-		// temporäre Gruppe
-		vector<Point2f> tmpGroup;
-
-		// Punktnummern
-		vector<int> pn;
-
-		int bi = 0;
-		int bj = 0;
+	int groupCorners(vector<Point2f> points){
+		int hit = 0;
 
 		// Gruppierung
 		for (int i = 0; i < points.size(); i++){
-			bi = 0;
 			for (int j = 0; j < points.size(); j++){
-				bj = 0;
-				Point2f p = points[i] - points[j];
-				if ((p.x != 0) && (p.y != 0)){
-					double euk = sqrt(pow(p.x,2) + pow(p.y,2));
-					if ((euk >= dist1) && (euk <= dist2)){
-						for (int k = 0; k < tmpGroup.size(); k++){
-							if (tmpGroup[k] == points[i]){
-								bi = 1;
-							}
-							if (tmpGroup[k] == points[j]){
-								bj = 1;
-							}
-						}
-						if (bi != 1){
+				for (int k = 0; k < points.size(); k++){
+					for (int l = 0; l < points.size(); l++){
+						if ((i != j) && ( i != k) && ( i != l) &&
+							(j != k ) && ( j != l) && ( k != l)){
+							vector<Point2f> tmpGroup;
 							tmpGroup.push_back(points[i]);
-							pn.push_back(i);
-						}
-						if (bj != 1){
 							tmpGroup.push_back(points[j]);
-							pn.push_back(j);
+							tmpGroup.push_back(points[k]);
+							tmpGroup.push_back(points[l]);
+							double a = cornerDetector.calcArea(tmpGroup);
+							cout << "i: "<< i << " j: " << j << " k: " << k << " l: " << l << endl; 
+							cout << "Flaecheninhalt: " << a << endl;
+							if ((a >= area_min) && (a <= area_max)){
+								group.push_back(tmpGroup);
+								points.erase(points.begin()+i);
+								points.erase(points.begin()+j);
+								points.erase(points.begin()+k);
+								points.erase(points.begin()+l);
+								hit = 1;
+							} 
+							tmpGroup.clear();
+							if (hit > 0){
+								groupCorners(points);
+								return 0;
+							}
 						}
 					}
 				}
-			}
-			if (tmpGroup.size() == 4){
-				group.push_back(tmpGroup);
-				for (int z = 0; z < pn.size(); z++){
-					corners.erase(corners.begin()+pn[z]);
-				}
-				tmpGroup.clear();
-				groupCorners(corners);
-				break;
-			}
+			}				
+		}
+		return 0;
+	}
+	void displayGroup(){
+		vector<Point2f> centers;
+		for (int i = 0; i < group.size(); i++){
+			centers.push_back(cornerDetector.centerDice(group[i]));
 		}
 	}
 };
