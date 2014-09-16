@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "Shlwapi.h"
+
 
 using namespace cv;
 using namespace std;
@@ -86,20 +86,16 @@ private:
 	int blockSize;
 	bool useHarrisDetector;
 	double k;
-	
-	// private Constructor
-	//ShiTomasi() {};
+
+	char* exportFile;
+
 public:
 	ShiTomasi() {
 		//src = imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
-		src = imread("D:\\Objekterkennung\\test2.tiff", CV_LOAD_IMAGE_GRAYSCALE);
+		/*src = imread("D:\\Objekterkennung\\test2.tiff", CV_LOAD_IMAGE_GRAYSCALE);*/
+
 		// Detector Parameter
-		maxCorners = 30;
-		qualityLevel = 0.01;
-		minDistance = 9;
-		blockSize = 3;
 		useHarrisDetector = false;
-		k = 0.04;
 	}
 	void loadImage(char* file){
 		src = imread(file, CV_LOAD_IMAGE_GRAYSCALE);
@@ -109,7 +105,7 @@ public:
 		// Eckenerkennen
 		goodFeaturesToTrack(src, corners, maxCorners, qualityLevel, 
 			minDistance, Mat(), blockSize, useHarrisDetector, k);
-		cout << "Erkannte Ecken :" << corners.size()<<endl;
+		cout << "Erkannte Ecken :" << corners.size() << endl;
 		return corners;
 	}
 	void showImgCircles(vector<Point2f> corners){
