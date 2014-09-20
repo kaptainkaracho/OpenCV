@@ -64,6 +64,13 @@ void initialize(char* filename){
 	}
 }
 
+
+vector<Point2f> sortVectorPoints(vector<Point2f> vec){
+		std::sort(vec.begin(), vec.end(), [](const cv::Point2f &a, const cv::Point2f &b) {
+		return a.x*a.x + a.y*a.y < b.x*b.x + b.y*b.y;});
+		return vec;
+	}
+
 int main (int argc, char** argv){
 	// Initialisierung
 	if (argc == 1){
@@ -90,6 +97,9 @@ int main (int argc, char** argv){
 		exportfile.close();
 	}
 
+	// sortieren der Eckpunkte nach der Entfernung zum Ursprung
+	vector<Point2f> sortCorners = sortVectorPoints(corners);
+
 	// exportieren eines Bildes mit erkannten Ecken
 	Mat copy;
 	copy = src.clone();
@@ -98,6 +108,5 @@ int main (int argc, char** argv){
 		{ circle( copy, corners[i], circle_radius, Scalar(0),
 					2, 8, 0 ); }
 	imwrite(exportPicFile, copy);
-
 }
 
