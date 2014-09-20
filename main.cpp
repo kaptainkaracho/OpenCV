@@ -86,26 +86,28 @@ int main (int argc, char** argv){
 	goodFeaturesToTrack(src, corners, maxCorners, qualityLevel, 
 			minDistance, Mat(), blockSize, useHarrisDetector, k);
 	cout << "Erkannte Ecken :" << corners.size() << endl;
+
+	// sortieren der Eckpunkte nach der Entfernung zum Ursprung
+	vector<Point2f> sortCorners = sortVectorPoints(corners);
+
 	
 	// exportieren der Eckpunkte
 	ofstream exportfile(exportFile, ios::trunc);
 	if (exportfile.is_open()){
-		for (int i = 0; i < corners.size(); i++){
-			string line = to_string(corners[i].x) + ";" + to_string(corners[i].y);
+		for (int i = 0; i < sortCorners.size(); i++){
+			string line = to_string(sortCorners[i].x) + ";" + to_string(sortCorners[i].y);
 			exportfile << line << endl;
 		}
 		exportfile.close();
 	}
 
-	// sortieren der Eckpunkte nach der Entfernung zum Ursprung
-	vector<Point2f> sortCorners = sortVectorPoints(corners);
-
+	
 	// exportieren eines Bildes mit erkannten Ecken
 	Mat copy;
 	copy = src.clone();
 
-	for( int i = 0; i < corners.size(); i++ )
-		{ circle( copy, corners[i], circle_radius, Scalar(0),
+	for( int i = 0; i < sortCorners.size(); i++ )
+		{ circle( copy, sortCorners[i], circle_radius, Scalar(0),
 					2, 8, 0 ); }
 	imwrite(exportPicFile, copy);
 }
